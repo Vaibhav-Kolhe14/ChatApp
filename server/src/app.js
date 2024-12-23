@@ -18,6 +18,6 @@ app.use(express.static('public'))
 app.use(cookieParser())
 
 //Routes
-app.use('/api/v1', userRouter)
+app.use('/api/v1/user', userRouter)
 
 module.exports = { app }
