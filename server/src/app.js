@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser")
 
 //Route Import 
 const userRouter = require("./routes/userRoutes.js")
+const messageRouter = require("./routes/messageRoutes.js")
 
 const app = express()
 
@@ -19,5 +20,6 @@ app.use(cookieParser())
 
 //Routes
 app.use('/api/v1/user', userRouter)
+app.use('/api/v1/message', messageRouter)
 
 module.exports = { app }
