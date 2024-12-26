@@ -39,7 +39,7 @@ const sendMessage = asyncHandler( async(req, res) => {
         if(receiverSocketId){
             io.to(receiverSocketId).emit("newMessage", newMessage);
         }
-        res.status(201).json(new ApiResponse(201, newMessage, "message sent"))
+        res.status(201).json(new ApiResponse(201, {newMessage: newMessage}, "message sent"))
     } catch (error) {
         console.log(error);
         throw new ApiError(400, "Error in sending message")

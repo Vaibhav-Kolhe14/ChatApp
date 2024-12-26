@@ -19,7 +19,8 @@ const SendInput = () => {
                 },
                 withCredentials:true
             });
-            dispatch(setMessages([...messages, res?.data?.newMessage]))
+            console.log("Checking res.data.data.newMessage from SendInput.jsx :: ", res, "\n", res.data)
+            dispatch(setMessages([...messages, res?.data?.data.newMessage]))
         } catch (error) {
             console.log(error);
         } 
