@@ -19,7 +19,7 @@ const Signup = () => {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${import.meta.env.SERVER_URL}/api/v1/user/register`, user, {
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/v1/user/register`, user, {
         headers: {
           'Content-Type': 'application/json'
         },

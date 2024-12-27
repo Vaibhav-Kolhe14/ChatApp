@@ -16,17 +16,19 @@ const Login = () => {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${import.meta.env.SERVER_URL}/api/v1/user/login`, user, {
+      console.log("Login.jsx testing")
+
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/v1/user/login`, user, {
         headers: {
           'Content-Type': 'application/json'
         },
         withCredentials: true
       });
       navigate("/");
-      console.log("Response from Login in Login.jsx Come for checking res.data.data ::",res);
+      console.log("Response from Login in Login.jsx Come for checking res.data.data ::",res.data);
       dispatch(setAuthUser(res.data.data));
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error("Error While Login !");
       console.log(error);
     }
     setUser({

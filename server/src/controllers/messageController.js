@@ -1,70 +1,73 @@
 const ApiError = require('../utils/ApiError.js');
-const ApiResponse = require('../utils/ApiResponse.js')
-const asyncHandler = require('../utils/asyncHandler.js')
-const Message = require('../models/messageModel.js')
-const Conversation = require("../models/conversationModel.js")
+const ApiResponse = require('../utils/ApiResponse.js');
+const asyncHandler = require('../utils/asyncHandler.js');
+const Message = require('../models/messageModel.js');
+const Conversation = require("../models/conversationModel.js");
+const { getReceiverSocketId, io } = require("../utils/socket.js");
 
-
-const sendMessage = asyncHandler( async(req, res) => {
+const sendMessage = asyncHandler(async (req, res) => {
     try {
         const senderId = req.id;
         const receiverId = req.params.id;
         const { message } = req.body;
 
         let gotConversation = await Conversation.findOne({
-            participants:{$all : [senderId, receiverId]},
+            participants: { $all: [senderId, receiverId] },
         });
 
-        if(!gotConversation){
+        if (!gotConversation) {
             gotConversation = await Conversation.create({
-                participants:[senderId, receiverId]
-            })
-        };
+                participants: [senderId, receiverId],
+            });
+        }
 
         const newMessage = await Message.create({
             senderId,
             receiverId,
-            message
+            message,
         });
 
-        if(newMessage){
+        if (newMessage) {
             gotConversation.messages.push(newMessage._id);
-        };
-        
+        }
 
         await Promise.all([gotConversation.save(), newMessage.save()]);
-         
-        // SOCKET IO
+
+        // SOCKET.IO
         const receiverSocketId = getReceiverSocketId(receiverId);
-        if(receiverSocketId){
+        console.log("Receiver Socket ID:", receiverSocketId);
+
+
+        if (receiverSocketId && io) {
             io.to(receiverSocketId).emit("newMessage", newMessage);
         }
-        res.status(201).json(new ApiResponse(201, {newMessage: newMessage}, "message sent"))
+
+        res.status(201).json(
+            new ApiResponse(201, { newMessage: newMessage }, "Message sent successfully")
+        );
     } catch (error) {
-        console.log(error);
-        throw new ApiError(400, "Error in sending message")
+        console.error(error);
+        throw new ApiError(400, "Error in sending message");
     }
-})
+});
 
-
-const getMessage = asyncHandler( async(req, res) => {
+const getMessage = asyncHandler(async (req, res) => {
     try {
         const receiverId = req.params.id;
         const senderId = req.id;
 
         const conversation = await Conversation.findOne({
-            participants:{$all : [senderId, receiverId]}
-        }).populate("messages"); 
+            participants: { $all: [senderId, receiverId] },
+        }).populate("messages");
 
         res.status(200).json(new ApiResponse(200, conversation?.messages, "Messages retrieved successfully"));
     } catch (error) {
         console.log(error);
-        throw new ApiError(400, "Error in getMessage")
+        throw new ApiError(400, "Error in getMessage");
     }
-})
-
+});
 
 module.exports = {
     sendMessage,
-    getMessage
-}
+    getMessage,
+};
