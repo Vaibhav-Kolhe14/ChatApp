@@ -4,7 +4,7 @@
 
 1. **Clone the Repository**:  
    ```bash  
-   git clone https://github.com/your-username/VoteChainX.git  
+   https://github.com/Vaibhav-Kolhe14/ChatApp.git  
    ```  
 
 2. **Navigate to the Project Directory**:  
